@@ -1,0 +1,88 @@
+//plugins {
+//    id 'java'
+//    id 'com.github.johnrengelman.shadow' version '1.2.3'
+//}
+
+group 'net.kyivstar.dmp'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'scala'
+apply plugin: 'idea'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+configurations {
+    provided
+}
+
+sourceSets {
+    main {
+        compileClasspath += configurations.provided
+    }
+}
+
+
+repositories {
+    jcenter()
+    mavenLocal()
+    mavenCentral()
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
+}
+
+
+
+dependencies {
+    compile "org.scala-lang:scala-library:"+scalaVersion
+    compile "org.scala-lang:scala-reflect:"+scalaVersion
+    compile "org.scala-lang:scala-compiler:"+scalaVersion
+
+    compile 'org.apache.spark:spark-sql_2.11:'+sparkVersion
+    compile 'org.apache.spark:spark-streaming_2.11:'+sparkVersion
+    compile 'org.apache.spark:spark-core_2.11:'+sparkVersion
+    compile 'com.datastax.spark:spark-cassandra-connector_2.11:'+sparkVersion
+
+    compile group: 'commons-io', name: 'commons-io', version: '2.5'
+
+    // Use Scalatest for testing our library
+    testCompile 'org.scalatest:scalatest_2.11:3.0.8'
+    testCompile 'junit:junit:4.12'
+}
+
+task run(type: JavaExec, dependsOn: classes) {
+    main = mainClassFile
+    classpath sourceSets.main.runtimeClasspath
+    classpath configurations.runtime
+}
+
+jar {
+    enabled = true
+//    baseName = 'spark-engine'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    manifest {
+        attributes("Implementation-Title": baseName,
+                "Built-Date": new Date())
+    }
+}
+
+//shadowJar {
+//    classifier = 'shadow'
+//    append 'reference.conf'
+//    dependencies {
+//
+//    }
+//}
+
+idea {
+    module {
+        // IntelliJ does not know about the standard idiom of provided as used in managing
+        // uber/shaded jar dependencies. Make it so!
+        scopes.PROVIDED.plus += [ configurations.provided ]
+    }
+}

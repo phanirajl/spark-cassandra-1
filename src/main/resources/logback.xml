@@ -1,0 +1,64 @@
+<configuration scan="true" scanPeriod="120 seconds">
+    <property name="APP_HOME" value="."/>
+    <contextName>DMP-DATA-GETTER</contextName>
+
+    <!--***************************************************************************************************************-->
+
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
+
+    <!--***************************************************************************************************************-->
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <withJansi>true</withJansi>
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight(%-5level) %cyan(%logger{15}) user=%X{user}
+                logId=%X{logId} - %msg %n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="APP_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${APP_HOME}/logs/dmp-data-getter.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${APP_HOME}/logs/dmp-data-getter-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxHistory>7</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <charset>utf-8</charset>
+            <pattern>
+                [%d{yyyy-MM-dd HH:mm:ss.SSS}] [%thread] [%-4level] [%-36logger{36}] user=%X{user} logId=%X{logId} -
+                %msg%n%xException
+            </pattern>
+        </encoder>
+    </appender>
+    <!--***************************************************************************************************************-->
+
+    <appender name="ASYNC_APP_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>3000</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <appender-ref ref="APP_FILE"/>
+    </appender>
+
+    <!--***************************************************************************************************************-->
+
+    <logger name="org.apache.spark" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ASYNC_APP_FILE"/>
+    </logger>
+    <logger name="com.datastax.driver" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ASYNC_APP_FILE"/>
+    </logger>
+
+    <!--***************************************************************************************************************-->
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ASYNC_APP_FILE"/>
+    </root>
+
+</configuration>
