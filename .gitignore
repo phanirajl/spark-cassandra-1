@@ -48,3 +48,4 @@ activator-sbt-*-shim.sbt
 */build/*
 .vscode/
 /bin/
+*.sc
