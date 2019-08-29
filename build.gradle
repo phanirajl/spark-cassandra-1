@@ -44,6 +44,10 @@ dependencies {
     compile 'org.apache.spark:spark-streaming_2.11:'+sparkVersion
     compile 'org.apache.spark:spark-core_2.11:'+sparkVersion
     compile 'com.datastax.spark:spark-cassandra-connector_2.11:'+sparkVersion
+    // https://mvnrepository.com/artifact/au.com.bytecode/opencsv
+    compile group: 'au.com.bytecode', name: 'opencsv', version: '2.4'
+
+
 
     compile group: 'commons-io', name: 'commons-io', version: '2.5'
 

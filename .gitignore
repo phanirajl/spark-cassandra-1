@@ -49,3 +49,4 @@ activator-sbt-*-shim.sbt
 .vscode/
 /bin/
 *.sc
+*.csv
